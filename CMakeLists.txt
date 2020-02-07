@@ -4,16 +4,18 @@ project(multithread_test)
 
 find_package(benchmark REQUIRED)
 
-include_directories("src/mtu")
+include_directories("src")
 
 file(GLOB_RECURSE SRC_FILES "src/mtu/*.cpp")
 
 # message("src:  ${SRC_FILES}")
 
-# 
+#  
 add_executable(${PROJECT_NAME} "src/main.cpp" ${SRC_FILES})
 
 # benchmark
-SET(BENCHMARK_TEST "bench_test")
-add_executable(${BENCHMARK_TEST} "src/test/bench_test.cpp" ${SRC_FILES})
-target_link_libraries(${BENCHMARK_TEST} benchmark::benchmark)
+if(COMPILE_BENCHMARK)
+    SET(BENCHMARK_TEST "bench_test")
+    add_executable(${BENCHMARK_TEST} "src/test/bench_test.cpp" ${SRC_FILES})
+    target_link_libraries(${BENCHMARK_TEST} benchmark::benchmark)
+endif(COMPILE_BENCHMARK) 

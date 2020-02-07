@@ -3,6 +3,8 @@
 #include <atomic>
 
 
+namespace mtu{
+
 class spinlock_mutex
 {
 public:
@@ -19,3 +21,5 @@ public:
 private:
     std::atomic_flag flag_;
 };
+
+}  // ns
