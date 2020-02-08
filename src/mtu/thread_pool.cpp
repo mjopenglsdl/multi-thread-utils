@@ -5,8 +5,6 @@
 #include <mtu/util.hpp>
 #include <mtu/log.hpp>
 
-#include <mtu/countdown_latch.hpp>
-
 
 using namespace mtu;
 
@@ -26,8 +24,6 @@ thread_pool::thread_pool(int thread_count)
     {
         v_thds_.push_back(std::thread(&thread_pool::thd_work, this) );
     }
-    
-    p_count_latch_ = std::make_unique<mtu::countdown_latch>(thread_count);
 }
 
 thread_pool::~thread_pool()
@@ -51,8 +47,6 @@ thread_pool::~thread_pool()
 
 void thread_pool::push_task(std::function<void()> func)
 {
-    p_count_latch_->wait();
-
     std::unique_lock<std::mutex> lk(mtx_);
     q_tasks_.push(func);
     cv_.notify_one();
@@ -63,23 +57,32 @@ void thread_pool::push_task(std::function<void()> func)
 /// work for each thread
 void thread_pool::thd_work()
 {
-    LOG_INFO("*** running on thread id: "<<std::this_thread::get_id());
 
-    static bool b_countdown_done = false;
-
-    while(!finished_.load())
+    while(1)
     {
         std::unique_lock<std::mutex> lk(mtx_);
 
-        if(!b_countdown_done){
-            b_countdown_done = true;
-            p_count_latch_->count_down();
-        }
+        LOG_INFO("*** waiting task on thread id: "<<std::this_thread::get_id());
 
         cv_.wait(lk, [this](){
             return this->q_tasks_.size() > 0 || this->finished_.load();
         });
+
+        if(finished_.load()){
+            break;
+        }
+
+        // copy task func
+        std::function<void()> task_func = q_tasks_.front();
+        q_tasks_.pop();
+
+        // release lock
+        lk.unlock();
+
+        // run task
+        task_func();
+        LOG_INFO("+++ task finished on thread id: "<<std::this_thread::get_id());
     }
 
-    LOG_INFO("  wait finished on thread id: "<<std::this_thread::get_id());
+    LOG_INFO("  Thread finished on thread id: "<<std::this_thread::get_id());
 }

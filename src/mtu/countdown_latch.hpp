@@ -3,9 +3,12 @@
 #include <condition_variable>
 #include <atomic>
 
+#include <mtu/noncopyable.hpp>
+
+
 namespace mtu{
 
-class countdown_latch 
+class countdown_latch : mtu::noncopyable
 {
 public:
     countdown_latch(uint32_t count);
@@ -19,8 +22,6 @@ public:
 
 private:
     countdown_latch() = delete;
-    countdown_latch(const countdown_latch& other) = delete;
-    countdown_latch& operator=(const countdown_latch& opther) = delete;
 
 private:
     std::condition_variable cv_;
