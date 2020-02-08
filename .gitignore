@@ -35,3 +35,4 @@
 # dirs
 .vscode/*
 build/*
+src/experimental/*

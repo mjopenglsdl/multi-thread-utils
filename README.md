@@ -1,5 +1,5 @@
 # multi-thread-utils
-Utilities that are commonly used in multi-thread programming. Feel free to use it in your own project :)
+Utilities that are commonly used in multi-thread programming. Feel free to use it in your own project. Welcome to contribute :)
 
 ## Features
 * The only dependency is **C++11**.
@@ -10,10 +10,7 @@ Utilities that are commonly used in multi-thread programming. Feel free to use i
 * spinlock_mutex
 * countdown_latch
 
-## Benchmark
-There is a benchmark test that compares the speed of code using **std::mutex** and **spinlock_mutex**.
-
-## Usage - thread_pool
+## Example - thread_pool
 ```C++
 #include <mtu/thread_pool.hpp>
 #include <mtu/util.hpp>
@@ -34,6 +31,10 @@ int main(int argc, char* argv[])
 return 0;
 }
 ```
+
+
+## Benchmark
+There is a benchmark test that compares the speed of code using **std::mutex** and **spinlock_mutex**.
 
 ## Contributors
 Minjie
