@@ -2,13 +2,13 @@
 
 #include <atomic>
 
-
 namespace mtu{
 
 class spinlock_mutex
 {
 public:
-    spinlock_mutex() : flag_(ATOMIC_FLAG_INIT){}
+    spinlock_mutex() : flag_(ATOMIC_FLAG_INIT)
+    {}
 
     void lock(){
         while (flag_.test_and_set(std::memory_order_acquire));
@@ -19,7 +19,7 @@ public:
     }
 
 private:
-    std::atomic_flag flag_;
+    std::atomic_flag flag_{ ATOMIC_FLAG_INIT };
 };
 
 }  // ns
